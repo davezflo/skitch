@@ -1,0 +1,19 @@
+action lerp {
+    num target = 1.0
+    num time = 10.0
+    num at = 0.0
+  
+    init:
+        o.pa != target -> update
+        _ -> deinit
+
+    update:
+        at += 1.0 time /!
+        o.pa = 1.0 at - o.pa * target at * +!
+        at >= 1.0 -> deinit
+        _ -> update
+
+    deinit:
+        o.pa = target!
+        _ -> deinit
+}

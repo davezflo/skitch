@@ -1,0 +1,85 @@
+use colors
+
+num fp = 2.0
+num gc = 5.0
+num e = 0.2
+
+shape square {
+    p0 -0.1 -0.1 -0.1
+    p1 0.1 -0.1 -0.1
+    p2 0.1 0.1 -0.1
+    p3 -0.1 0.1 -0.1
+
+    @p0 p1 p2 red red
+    @p2 p3 p0 red red
+}
+
+shape box {
+    p0 -0.1 -0.1 -0.1
+    p1 0.1 -0.1 -0.1
+    p2 0.1 0.1 -0.1
+    p3 -0.1 0.1 -0.1
+    p4 -0.1 0.1 0.1
+    p5 0.1 0.1 0.1
+    p6 0.1 -0.1 0.1
+    p7 -0.1 -0.1 0.1
+
+    @ p0 p1 p2 red red
+    @ p2 p3 p0 red red
+    @ p3 p4 p7 green green
+    @ p7 p0 p3 green green
+    @ p4 p5 p6 blue blue
+    @ p6 p7 p4 blue blue
+    @ p0 p7 p6 yellow yellow
+    @ p6 p1 p0 yellow yellow
+    @ p1 p6 p5 purple purple
+    @ p5 p2 p1 purple purple
+    @ p2 p5 p4 white white
+    @ p4 p3 p2 white white
+}
+
+shape pyramid {
+    p0 -e 0.0 e
+    p1 0.0 e 0.0
+    p2 e 0.0 e
+    p3 e 0.0 -e
+    p4 -e 0.0 -e
+
+    @ p0 p1 p2 red red
+    @ p2 p1 p3 green green
+    @ p3 p1 p4 blue blue
+    @ p4 p1 p0 purple purple
+    @ p0 p2 p3 yellow yellow
+    @ p3 p4 p0 yellow yellow 
+}
+
+
+shape floor {
+    p0 -fp 0.0 -fp
+    p1 fp 0.0 -fp
+    p2 fp 0.0 fp
+    p3 -fp 0.0 fp
+
+    @ p0 p1 p2 gray gray
+    @ p2 p3 p0 gray gray
+}
+
+shape ground {
+    p0 -gc 0.0 -gc
+    p1 gc 0.0 -gc
+    p2 gc 0.0 gc
+    p3 -gc 0.0 gc
+
+    @ p0 p1 p2 darkgreen darkgreen
+    @ p2 p3 p0 darkgreen darkgreen
+}
+
+shape wall {
+    p0 0.0 -fp -fp
+    p1 0.0 fp -fp
+    p2 0.0 fp fp
+    p3 0.0 -fp fp
+
+    @ p0 p1 p2 green green
+    @ p2 p3 p0 green green
+}

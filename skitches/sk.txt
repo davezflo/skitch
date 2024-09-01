@@ -1,0 +1,68 @@
+use lights
+use camera
+use shapes
+
+action test {
+    init:
+        m.left == keydown -> left
+        k.S == keydown -> godown
+        _ -> init
+
+    left:
+        o.tx += m.x!
+        _ -> init
+
+    goup:
+        o.ty += 0.2!
+        _ -> init
+
+    godown:
+        o.ty -= 0.2!
+        _ -> init
+}
+
+generator genplayer {
+    box player(1.0)
+    a: lighttrack(-1.0 5.5 2.0)
+z    a: lightfun(10.0 2.0 5.0)
+z    a: camerafun(5.0 5.0 30.0)
+    a: simplecamera(50.0 4.0 3.0)
+    i: advancedlighting
+    o: 0.0 1.0 0.0
+}
+
+map test {
+    turtle
+    tf: 4.0 ttx: 10.0 trx: 20.0 tf: 1.0 ttx: 0.0 trx: 0.0 
+    tay: 0.2 tf: 5.0 tty: 90.0 tf: 3.0 
+    trx: 90.0 tay: 0.5 taz: 0.5 tf: 3.0
+}
+
+map world {
+    infini
+    y: -0.3
+}
+
+generator genduo {
+    floor bob(50.0)
+    m: test(4.0 200.0)
+    i: simplelighting
+    m: -3.0 0.0 -2.0
+}
+
+zzz
+generator geninfini {
+    ground _(200.0)
+    m: world(10.0 80.0)
+    i: simplelighting
+    m: 0.0 0.0 0.0
+}
+zzz
+
+watch {
+    player @1.0
+    player @3.0
+    camera
+    light
+    fps
+}

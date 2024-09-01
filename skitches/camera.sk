@@ -1,0 +1,274 @@
+use utils
+num cancelspin = 0.0
+
+action spinplayer {
+    num direction = 0.0
+    num time = 20.0
+    num sc = 1.0
+    num at = 0.0
+
+    init:
+        cancelspin = 0.0!
+        direction == 0.0 -> left
+        direction == 1.0 -> right
+        _ -> left
+
+    left:
+        sc = o.ry 90.0 -!
+        _ -> lerpit
+
+    right:
+        sc = o.ry 90.0 +!
+        _ -> lerpit
+
+    lerpit:
+        at += 1.0 time /!
+        o.ry = 1.0 at - o.ry * sc at * +!
+        at >= 1.0 -> finalize
+        cancelspin == 1.0 -> finalize
+        _ -> lerpit
+
+    finalize:
+        o.ry = sc!
+        cancelspin = 0.0!
+        _ -> deinit
+}
+
+action movecamera {
+    num position = 0.0
+    num time = 20.0
+    num to = 3.0
+    num zsch = 0.0
+    num xsch = 0.0
+    num at = 0.0
+
+    init:
+        position == 0.0 -> southwest
+        position == 1.0 -> northwest
+        position == 2.0 -> northeast
+        position == 3.0 -> southeast
+        _ -> southwest
+
+    southwest:
+        zsch = c.lz to -!
+        xsch = c.lx to -!
+        _ -> lerpit
+
+    northwest:
+        zsch = c.lz to +!
+        xsch = c.lx to -!
+        _ -> lerpit
+
+    northeast:
+        zsch = c.lz to +!
+        xsch = c.lx to +!
+        _ -> lerpit
+
+    southeast:
+        zsch = c.lz to -!
+        xsch = c.lx to +!
+        _ -> lerpit
+
+    lerpit:
+        at += 1.0 time /!
+        c.tz = 1.0 at - c.tz * zsch at * +!
+        c.tx = 1.0 at - c.tx * xsch at * +!
+        at >= 1.0 -> finalize
+        _ -> lerpit
+
+    finalize:
+        c.tz = zsch!
+        c.tx = xsch!
+        _ -> deinit
+
+}
+
+action simplecamera {
+    num time = 30.0
+    num dist = 3.0
+    num height = 3.0
+    num xs = 0.0
+    num zs = 0.0
+    num needinit = 1.0
+    num ascratch = 0.0
+    num last = 0.0
+    
+    init:
+        c.ty = height!
+        ascratch = o.ry!
+        k.Left == keydown -> leftpress
+        k.Up == keydown -> uppress
+        k.Right == keydown -> rightpress
+        k.Down == keydown -> downpress
+        k.F == keydown -> elevate
+        k.D == keydown -> lower
+        needinit == 1.0 -> eval 
+        _ -> init
+
+    elevate:
+        height += 0.2!
+        height >= 5.0 -> toplimit
+        _ -> init
+
+    lower:
+        height -= 0.2!
+        height <= 0.2 -> bottomlimit
+        _ -> init
+    
+    toplimit:
+        height = 5.0!
+        _ -> init
+
+    bottomlimit:
+        height = 0.2!
+        _ -> init
+
+    uppress:
+        last == 0.0 -> forward
+        last == 1.0 -> rightway
+        last == 2.0 -> backward
+        last == 3.0 -> leftway
+        _ -> init
+
+    downpress:
+        last == 0.0 -> backward
+        last == 1.0 -> leftway
+        last == 2.0 -> forward
+        last == 3.0 -> rightway
+        _ -> init
+
+    leftpress:
+        last = last 1.0 - 4.0 %!
+        cancelspin = 1.0!
+        ~|spinplayer o.ry 1.0 time|~
+        _ -> eval
+
+    rightpress:
+        last = last 1.0 + 4.0 %!
+        cancelspin = 1.0!
+        ~|spinplayer o.ry 0.0 time|~
+        _ -> eval
+    
+    eval:
+        needinit = 0.0!
+        last == 0.0 -> left
+        last == 1.0 -> top
+        last == 2.0 -> right
+        last == 3.0 -> bottom
+        _ -> init
+
+    forward:
+        xs = o.tz dist +!
+        punch zlerp
+        ~|lerp c.lz xs time|~'zlerp
+        ~|lerp o.tz xs time|~'zlerp
+        _ -> eval
+
+    backward:
+        xs = o.tz dist -!
+        punch zlerp
+        ~|lerp c.lz xs time|~'zlerp
+        ~|lerp o.tz xs time|~'zlerp
+        _ -> eval
+
+    leftway:
+        xs = o.tx dist -!
+        punch xlerp
+        ~|lerp c.lx xs time|~'xlerp
+        ~|lerp o.tx xs time|~'xlerp
+        _ -> eval
+
+    rightway:
+        xs = o.tx dist +!
+        punch xlerp
+        ~|lerp c.lx xs time|~'xlerp
+        ~|lerp o.tx xs time|~'xlerp
+        _ -> eval
+        
+    left:
+        ~|movecamera _ 0.0 time dist|~
+        _ -> init
+
+    top:
+        ~|movecamera _ 1.0 time dist|~
+        _ -> init
+
+    right:
+        ~|movecamera _ 2.0 time dist|~
+        _ -> init
+
+    bottom:
+        ~|movecamera _ 3.0 time dist|~
+        _ -> init
+}
+
+action spincamera {
+    num speed = 0.05
+    init: 
+        c.ty = 3.0!
+        _-> loop
+    loop:
+        k.Y == keydown -> right
+        _ -> loop
+
+    right:
+        c.lx += speed!
+        c.lz -= speed!
+        c.lz <= c.tz -> back
+        _ -> right
+
+    back:
+        c.lx -= speed!
+        c.lz -= speed!
+        c.lx <= c.tx -> left
+        _ -> back
+
+    left:
+        c.lx -= speed!
+        c.lz += speed!
+        c.lz >= c.tz -> front
+        _ -> left
+
+    front:
+        c.lx += speed!
+        c.lz += speed!
+        c.lx >= c.tx -> right
+        _ -> front
+}
+
+action camerafun {
+    num r = 2.0
+    num speed = 2.0
+    num above = 1.0
+    num pi = 3.14159
+    num angle = 0.0
+
+    init:
+        angle = angle speed + 360.0 %!
+        c.tx = o.tx angle 180.0 / pi * cos r * +!
+        c.ty = o.ty above+!
+        c.tz = o.tz angle 180.0 / pi * sin r * +!
+        _ -> init
+}
+
+action cameratrack {
+    num xdistance = -1.0
+    num ydistance = 1.0
+    num zdistance = -1.0
+    init:
+        c.tx = o.tx xdistance +!
+        c.ty = o.ty ydistance +!
+        c.tz = o.tz zdistance +!
+        _ -> init
+}
+
+action setcamera {
+    init:
+        k.B == keydown -> movecamera
+        k.J == keydown -> movecamera
+        _ -> init
+    movecamera:
+        c.ty += 0.2!
+        c.ty >= 15.0 -> init
+        _ -> movecamera
+}

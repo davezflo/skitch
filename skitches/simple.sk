@@ -1,0 +1,35 @@
+color red = 0xff 0x00 0x00 0xff
+color green = 0x00 0xff 0x00 0xff
+color blue = 0x00 0x00 0xff 0xff
+color purple = 0xff 0x00 0xff 0xff
+color yellow = 0xff 0xff 0x00 0xff
+
+num e = 0.5
+
+shape pyramid {
+    p0 -e 0.0 e
+    p1 0.0 e 0.0
+    p2 e 0.0 e
+    p3 e 0.0 -e
+    p4 -e 0.0 -e
+
+    @ p0 p1 p2 red red
+    @ p2 p1 p3 green green
+    @ p3 p1 p4 blue blue
+    @ p4 p1 p0 purple purple
+    @ p0 p2 p3 yellow yellow
+    @ p3 p4 p0 yellow yellow 
+}
+
+action rotate {
+    init:
+        o.ry += 1.0!
+        o.rx += 2.0!
+        _ -> init
+}
+
+generator genplayer {
+    pyramid player(1.0)
+    a: rotate()
+    o: 0.0 0.0 0.0
+}

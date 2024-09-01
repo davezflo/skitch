@@ -1,0 +1,10 @@
+use camera
+use shapes
+
+generator genplayer {
+    pyramid player(1.0)
+    a: lighttrack(-1.0 5.5 2.0)
+    a: simplecamera(100.0)
+    i: advancedlighting
+    o: 0.0 1.0 0.0
+}

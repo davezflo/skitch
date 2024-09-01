@@ -1,0 +1,333 @@
+use colors
+use utils
+
+color fadedblue = 0x00 0x00 0xff 0x22
+color fadedyellow = 0xff 0xff 0x00 0x22
+color fadedred = 0xff 0x00 0x00 0x22
+num GRID = 0.02
+num GRIDLINES = 1.0
+num ZPLANE = 1.0
+num increment = 0.02
+num cameradistance = -1.0
+num angle = 0.0
+num xytplane = 0.0
+num yztplane = 0.0
+num xztplane = 0.0
+num e = 0.1
+num ps = 0.4
+num ec = 0.0
+state mode = {create} choose!
+
+zzz
+shape s {
+    p0 0.1 -0.1 0.0
+    p1 0.1 0.1 0.0
+    p2 -0.1 0.0 0.0
+
+    @ p0 p2 p1 green green
+}
+zzz
+
+shape xzplane {
+    p0 -ps 0.0 ps
+    p1 -ps 0.0 -ps
+    p2 ps 0.0 -ps
+    p3 ps 0.0 ps
+
+    @ p0 p1 p2 fadedblue fadedblue
+    @ p2 p3 p0 fadedblue fadedblue
+}
+
+shape xyplane {
+    p0 -ps ps 0.0
+    p1 -ps -ps 0.0
+    p2 ps -ps 0.0
+    p3 ps ps 0.0
+
+    @ p0 p1 p2 fadedyellow fadedyellow
+    @ p2 p3 p0 fadedyellow fadedyellow
+    @ p2 p1 p0 fadedyellow fadedyellow
+    @ p0 p3 p2 fadedyellow fadedyellow
+}
+
+shape yzplane {
+    p0 0.0 -ps ps
+    p1 0.0 -ps -ps
+    p2 0.0 ps -ps
+    p3 0.0 ps ps
+
+    @ p0 p1 p2 fadedred fadedred
+    @ p2 p3 p0 fadedred fadedred
+    @ p2 p1 p0 fadedred fadedred
+    @ p0 p3 p2 fadedred fadedred
+}
+
+shape template {
+    
+
+}
+
+action initialize {
+    init:
+        c.tz = cameradistance!
+        c.tx = 0.0!
+        c.ty = 0.0!
+        angle = 2.0!
+        _ -> deinit
+}
+
+action choosepoint {
+    init:
+        m.left == keydown -> figureangle
+        _ -> init
+
+    figureangle:
+        mode ? create -> create & init
+        _ -> getpoint
+    
+    getpoint:
+        o <- m.np
+        _ -> init
+}
+
+action createface {
+    init:
+        k.F == keydown -> makeface
+        _ -> init
+
+    makeface:
+        o <- @ green green
+        mode ? _ -> create & init
+        _ -> init
+}
+
+action createpoint {
+    num temp = 0.0
+    num negate = -1.0
+    init:
+        m.left == keydown -> figureangle
+        _ -> init
+
+    figureangle:
+        mode ? choose -> choose & init
+        angle == 0.0 -> xpoint
+        angle == 1.0 -> ypoint
+        angle == 2.0 -> zpoint
+        _ -> init
+
+    zpoint:
+        temp = m.x c.tz sign * negate *!
+        o <- pn temp m.y xytplane
+        _ -> init
+
+    ypoint:
+        o <- pn m.x xztplane m.y
+        _ -> init
+
+    xpoint:
+        temp = m.x c.tx sign *!
+        o <- pn yztplane m.y temp
+        _ -> init
+}
+
+action adjustplane {
+    init:
+        k.Plus == keydown -> increase
+        k.Dash == keydown -> decrease
+        k.Up == keydown -> raise
+        k.Down == keydown -> lower
+        k.Left == keydown -> left
+        k.Right == keydown -> right
+        _ -> init
+
+    updategrid:
+        ec = 1.0!
+        _ -> init
+
+    increase:
+        xytplane += increment!
+        _ -> updategrid
+
+    decrease:
+        xytplane -= increment!
+        _ -> updategrid
+
+    left:
+        yztplane += increment!
+        _ -> updategrid
+
+    right:
+        yztplane -= increment!
+        _ -> updategrid
+
+    raise:
+        xztplane += increment!
+        _ -> updategrid
+
+    lower:
+        xztplane -= increment!
+        _ -> updategrid
+
+}
+
+action editcontrol {
+    init:
+        k.E == keydown -> edittest
+        k.C == keydown -> chooseorcreate
+        k.U == keydown -> undo
+        ec == 1.0 -> edittest
+        _ -> init
+
+    undo:
+        o <- /
+        _ -> init
+
+    chooseorcreate:
+        mode ? choose -> create & init
+        mode ? create -> choose & init
+        _ -> init
+
+    edittest:   
+        c.tx == 0.0 -> editx
+        c.tz == 0.0 -> editz
+        c.ty == 1.0 -> edity
+        _ -> init
+
+    edity:
+        angle = 1.0!
+        ZPLANE = cameradistance abs xztplane +!
+        _ -> edit
+
+    editx:
+        angle = 2.0!
+        ZPLANE = cameradistance abs c.tz sign * xytplane - abs!
+        _ -> edit
+
+    editz:
+        angle = 0.0!
+        ZPLANE = cameradistance abs c.tx sign * yztplane - abs!
+        _ -> edit
+    
+    edit:
+        GRIDLINES = 1.0!
+        ec = 0.0!
+        c.ty = 0.0!
+        _ -> init
+
+}
+
+zzz
+action pointexperiment {
+    init:
+        k.H == keydown -> left
+        _ -> init
+    left:
+        {p}.x = {p}.x + 3
+        _ -> init 
+}
+zzz
+
+action control {
+    num time = 100.0
+    num pi = 3.14159
+    num theta = 270.0
+    num phi = 90.0
+    num inc = 5.0
+    num r = 1.0
+
+    init:
+        k.A == keydown -> turnleft
+        k.D == keydown -> turnright
+        k.W == keydown -> turndown
+        k.S == keydown -> turnup
+        _ -> init
+
+    turnleft:
+        theta = theta inc - 360.0 %!
+        _ -> calcangle
+
+    turnright:
+        theta = theta inc + 360.0 %!
+        _ -> calcangle
+
+    turnup:
+        phi = phi inc + 360.0 %!
+        _ -> calcangle
+
+    turndown:
+        phi = phi inc - 360.0 %!
+        _ -> calcangle
+
+    calcangle:
+        angle = 3.0!
+        GRIDLINES = 0.0!
+        c.tx = o.tx theta 180.0 / pi * cos phi 180.0 / pi * sin r * * +!
+        c.ty = o.ty phi 180.0 / pi * cos r * +!
+        c.tz = o.tz theta 180.0 / pi * sin phi 180.0 / pi * sin r * * +!
+        _ -> init
+
+}
+
+action adjustxyplane {
+    init: 
+        o.tz = xytplane!
+        _ -> init
+}
+
+action adjustyzplane {
+    init: 
+        o.tx = yztplane!
+        _ -> init
+}
+
+action adjustxzplane {
+    init: 
+        o.ty = xztplane!
+        _ -> init
+}
+
+generator genplayer {
+    template player(1.0)
+    a: initialize()
+    a: control()
+    a: editcontrol()
+    a: adjustplane()
+    a: createpoint()
+    a: choosepoint()
+    a: createface()
+    i: points
+    o: 0.0 0.0 0.0 
+}
+
+generator xzgen {
+    xzplane xax(1.0)
+    a: adjustxzplane()
+    o: 0.0 0.0 0.0
+}
+
+generator xygen {
+    xyplane xay(1.0)
+    a: adjustxyplane()
+    o: 0.0 0.0 0.0
+}
+
+
+generator yzgen {
+    yzplane yaz(1.0)
+    a: adjustyzplane()
+    o: 0.0 0.0 0.0
+}
+
+watch {
+    points
+    mouse
+    angle
+    targetplane
+    camera
+    xytplane
+    yztplane
+    xztplane
+    player
+    ZPLANE
+    mode
+}

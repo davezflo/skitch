@@ -1,0 +1,34 @@
+use shapes
+
+num c = 0.0
+
+action compute {
+    num aa = 1.0
+    num bb = 1.0
+    num counter = 100.0
+    
+    init: 
+        c = aa bb +!
+        bb = aa!
+        aa = c!
+        _ -> countdown
+
+    countdown:
+        counter = counter 1.0 -!
+        counter <= 0.0 -> resetcounter
+        _ -> countdown
+
+    resetcounter:
+        counter = 100.0!
+        _ -> init
+}
+
+generator genfib {
+    square fib(1.0)
+    a: compute(1.0 1.0)
+    o: 0.0 1.0 0.0
+}
+
+watch {
+    c
+}

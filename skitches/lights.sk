@@ -1,0 +1,34 @@
+action lightfun {
+    num r = 2.0
+    num speed = 2.0
+    num above = 4.0
+    num pi = 3.14159
+    num angle = 0.0
+
+    init:
+        angle = angle speed + 360.0 %!
+        l.tx = o.tx angle 180.0 / pi * cos r * +!
+        l.ty = o.ty above+!
+        l.tz = o.tz angle 180.0 / pi * sin r * +!
+        _ -> init
+
+}
+
+action lighttrack {
+    num xdistance = -1.0
+    num ydistance = 2.0
+    num zdistance = -1.0
+    init:
+        l.tx = o.tx xdistance +!
+        l.ty = o.ty ydistance +!
+        l.tz = o.tz zdistance +!
+        _ -> deinit
+}
+
+action setlight {
+    init:
+        l.tx = -1.0!
+        l.ty = 1.0!
+        l.tz = -1.0!
+        _ -> deinit
+}
