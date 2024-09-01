@@ -101,7 +101,6 @@ string Regex::Match(char *match)
     matchValue = "";
     s = stateChain->next;
     char *at = match;
-    int index = 0;
     while(s)
     {
         char a = at[0];
@@ -110,7 +109,6 @@ string Regex::Match(char *match)
         if(success)
         {
             matchValue.push_back(a);
-            index++;
         }
         else if(s==NULL) //Indicates we are done
         {

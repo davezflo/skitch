@@ -166,7 +166,7 @@ int Matrix4x4::CandidateRowSwap(int row, int col)
     {
         if(r != row)
         {
-            if(abs(rows[r][col]>max))
+            if(rows[r][col]>max)
             {
                 max = abs(rows[r][col]);
                 bestrow = r;
@@ -178,7 +178,7 @@ int Matrix4x4::CandidateRowSwap(int row, int col)
 
 void Matrix4x4::Inverse()
 {
-    //using reduced row elimination - adapted from scratchapixel
+    //using reduced row elimination - adapted from scratchapixel [likely inspired by this - https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/matrix-inverse/matrix-inverse.html]
     Matrix4x4 returnvalue;
     //Swap Rows as needed
     for(int col=0;col<SIZE;col++)
