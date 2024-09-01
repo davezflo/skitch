@@ -13,7 +13,7 @@ class SKAttributeVariable : SKNumberVariable
         SKAttributeVariable(string name, SKEntity *parent);
 
         SKVariable *AllocCopy() override;
-        void SetValue(float value);
+        void SetValue(float value) override;
         void UpdateValue(float value) {_value = myround(value);}
         float GetValue() override;
 };
