@@ -176,9 +176,9 @@ void SKRender::SortFaces(SKModel *model)
     {
         bool operator()(SKFace *a, SKFace *b)
         {
-            bool returnvalue = a->GetCenter().y<b->GetCenter().y;
-            if(abs(a->GetCenter().y - b->GetCenter().y) < 0.1)
-                returnvalue = a->Distance()>b->Distance();
+          //  bool returnvalue = a->GetCenter().y<b->GetCenter().y;
+          //  if(abs(a->GetCenter().y - b->GetCenter().y) < 0.1)
+            bool returnvalue = a->Distance()>b->Distance();
             return returnvalue;
         }
     } compareFaceDistance;

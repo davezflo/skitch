@@ -14,6 +14,151 @@ shape square {
     @p2 p3 p0 red red
 }
 
+shape plane {
+    p0 -0.4 -0.1 -0.1
+    p1 -0.4 0.1 -0.1
+    p2 0.4 0.1 -0.1
+    p3 0.4 -0.1 -0.1
+
+    p4 -0.4 -0.1 0.1
+    p5 -0.4 0.1 0.1
+    p6 0.4 0.1 0.1
+    p7 0.4 -0.1 0.1
+
+    p8 0.7 0.0 0.0
+
+    p9 -0.47 -0.02 -0.05
+    p10 -0.47 -0.02 0.05
+    p11 -0.47 0.02 0.05
+    p12 -0.47 0.02 -0.05
+
+    p13 -0.4 0.3 0.0
+    p14 -0.2 0.1 0.0
+    p15 -0.4 0.1 0.0
+    p16 -0.2 0.1 -0.1
+    p17 -0.2 0.1 0.1
+    p18 0.2 0.2 0.0
+    p19 0.0 0.1 -0.02
+    p20 0.0 0.1 0.02
+    p21 0.0 0.1 -0.1
+    p22 0.0 0.1 0.1
+
+z   points on plane for right wing
+    p23 -0.2 0.03 -0.1
+    p24 0.2 0.03 -0.1
+    p25 0.2 -0.03 -0.1
+    p26 -0.2 -0.03 -0.1
+
+    p27 -0.3 0.01 -0.4
+    p28 -0.05 0.01 -0.4
+    p29 -0.05 -0.01 -0.4
+    p30 -0.3 -0.01 -0.4
+
+z   points on plane for left wing
+    p31 -0.2 0.03 0.1
+    p32 0.2 0.03 0.1
+    p33 0.2 -0.03 0.1
+    p34 -0.2 -0.03 0.1
+
+    p35 -0.3 0.01 0.4
+    p36 -0.05 0.01 0.4
+    p37 -0.05 -0.01 0.4
+    p38 -0.3 -0.01 0.4
+
+z   engine
+    @ p11 p10 p9 yellow yellow
+    @ p9 p12 p11 yellow yellow
+    
+z   Right Wing
+    @ p23 p27 p28 silver silver
+    @ p28 p24 p23 silver silver
+
+    @ p25 p29 p30 silver silver
+    @ p30 p26 p25 silver silver
+
+    @ p24 p28 p29 silver silver
+    @ p29 p25 p24 silver silver
+    @ p30 p27 p23 silver silver
+    @ p23 p26 p30 silver silver
+    @ p29 p28 p27 silver silver
+    @ p27 p30 p29 silver silver
+
+z   Left Wing    
+    @ p36 p35 p31 silver silver
+    @ p31 p32 p36 silver silver
+
+    @ p38 p37 p33 silver silver
+    @ p33 p34 p38 silver silver
+
+    @ p37 p36 p32 silver silver
+    @ p32 p33 p37 silver silver
+    @ p31 p35 p38 silver silver
+    @ p38 p34 p31 silver silver
+    @ p35 p36 p37 silver silver
+    @ p37 p38 p35 silver silver
+
+z   Tail of plane
+    @ p14 p5 p13 silver silver
+    @ p13 p1 p14 silver silver
+    @ p15 p13 p5 silver silver
+    @ p1 p13 p15 silver silver
+    
+z   Top of Plane
+    @ p16 p14 p1 silver silver
+    @ p14 p17 p5 silver silver
+    @ p22 p20 p6 silver silver
+    @ p2 p19 p21 silver silver
+    @ p20 p17 p14 silver silver
+    @ p17 p20 p22 silver silver 
+    @ p21 p20 p14 silver silver
+    @ p14 p16 p21 silver silver
+
+z   Canopy
+    @ p20 p18 p6 offwhite offwhite 
+    @ p2 p18 p19 offwhite offwhite
+    @ p19 p18 p20 gray gray
+    @ p6 p18 p2 offwhite offwhite
+    
+z   Body
+
+z   Right Side
+    @ p23 p1 p0 silver silver
+    @ p0 p26 p23 silver silver
+    @ p1 p23 p24 silver silver
+    @ p1 p24 p2 silver silver
+    @ p3 p26 p0 silver silver
+    @ p3 p25 p26 silver silver
+    @ p24 p3 p2 silver silver
+    @ p3 p24 p25 silver silver
+
+z   Left Side
+    @ p31 p4 p5 silver silver
+    @ p5 p32 p31 silver silver
+    @ p6 p32 p5 silver silver
+    @ p6 p7 p32 silver silver
+    @ p33 p32 p7 silver silver
+    @ p31 p33 p4 silver silver
+    @ p4 p33 p7 silver silver
+
+
+z   Rest of plane
+    @ p0 p4 p7 silver silver
+    @ p7 p3 p0 silver silver
+    @ p2 p8 p6 silver silver
+    @ p3 p8 p2 silver silver
+    @ p6 p8 p7 silver silver
+    @ p7 p8 p3 silver silver
+    @ p0 p9 p4 silver silver
+    @ p4 p9 p10 silver silver
+    @ p12 p9 p0 silver silver
+    @ p1 p12 p0 silver silver
+    @ p11 p12 p1 silver silver
+    @ p1 p5 p11 silver silver
+    @ p10 p11 p5 silver silver
+    @ p4 p10 p5 silver silver
+
+}
+
 shape box {
     p0 -0.1 -0.1 -0.1
     p1 0.1 -0.1 -0.1
@@ -52,7 +197,6 @@ shape pyramid {
     @ p0 p2 p3 yellow yellow
     @ p3 p4 p0 yellow yellow 
 }
-
 
 shape floor {
     p0 -fp 0.0 -fp

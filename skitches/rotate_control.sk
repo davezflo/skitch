@@ -1,0 +1,102 @@
+use shapes
+
+num keymap = 0.0
+
+zzz
+This has got several interesting things
+1) The rotate control action allows you to spin the object freely
+2) A simple demonstration with keymapping (i.e. remapping same keys to do something else)
+zzz
+
+action rotatecamera {
+    init:
+        keymap == 0.0 -> off
+        k.Left == keydown -> leftpress
+        k.S == keydown -> toggle
+        _ -> init
+
+    leftpress:
+        c.tx += 0.1!
+        _ -> init
+
+    off:
+        k.S == keydown -> toggle
+        _ -> off
+    
+    keymapone:
+        keymap = 1.0!
+        _ -> init
+
+    keymapzero:
+        keymap = 0.0!
+        _ -> init
+
+    toggle:
+        keymap == 0.0 -> keymapone
+        keymap == 1.0 -> keymapzero
+        _ -> init
+
+}
+
+action rotatecontrol {
+    num mag = 1.0
+    
+    init:
+        keymap == 1.0 -> off
+        k.Left == keydown -> leftpress
+        k.Up == keydown -> uppress
+        k.Right == keydown -> rightpress
+        k.Down == keydown -> downpress
+        k.Z == keydown -> zoom
+        k.S == keydown -> toggle
+        _ -> init
+
+    off:
+        k.S == keydown -> toggle
+        _ -> off
+    
+    keymapone:
+        keymap = 1.0!
+        _ -> init
+
+    keymapzero:
+        keymap = 0.0!
+        _ -> init
+
+    toggle:
+        keymap == 0.0 -> keymapone
+        keymap == 1.0 -> keymapzero
+        _ -> init
+
+    zoom:
+        c.tz += 0.05!
+        _ -> init
+
+    leftpress:
+        o.ry = o.ry mag + 360.0 %!
+        _ -> init
+
+    rightpress:
+        o.ry = o.ry mag - 360.0 %!
+        _ -> init
+
+    uppress: 
+        o.rx = o.rx mag + 360.0 %!
+        _ -> init
+
+    downpress:
+        o.rx = o.rx mag - 360.0 %!
+        _ -> init
+}
+
+generator genplayer {
+    plane player(1.0)
+    a: rotatecontrol(3.0)
+    a: rotatecamera()
+    i: simplelighting
+    o: 0.0 0.0 0.0
+}
+
+watch {
+    keymap
+}

@@ -1,0 +1,58 @@
+color red = 0xff 0x00 0x00 0xff
+color green = 0x00 0xff 0x00 0xff
+color blue = 0x00 0x00 0xff 0xff
+color purple = 0xff 0x00 0xff 0xff
+color brown = 0xff 0xff 0x00 0xff
+
+num e = 0.5
+
+shape pyramid {
+    p0 -e 0.0 e
+    p1 0.0 e 0.0
+    p2 e 0.0 e
+    p3 e 0.0 -e
+    p4 -e 0.0 -e
+    @ p0 p1 p2 red red
+    @ p2 p1 p3 green green
+    @ p3 p1 p4 blue blue
+    @ p4 p1 p0 purple purple
+    @ p0 p2 p3 brown brown
+    @ p3 p4 p0 brown brown
+}
+
+action rotate {
+    init:
+        o.rx = 37.0!
+        o.ry = 45.0!
+        _ -> init
+}
+
+action lightswing {
+    num max = 10.0
+    num inc = 0.05
+
+    init:
+        l.tx = -max!
+        _ -> right
+    right:
+        l.tx += inc!
+        l.tx >= max -> left
+        _ -> right
+    left:
+        l.tx -= inc!
+        l.tx <= -max -> right
+        _ -> left
+}
+
+generator genpyramid {
+    pyramid mypyramid(1.0)
+    a: lightswing(10.0 0.05)
+    a: rotate()
+    i: simplelighting
+    o: 0.0 0.0 0.0
+}
+
+watch {
+    camera
+    light
+}

@@ -19,7 +19,7 @@ The elements of a skitch program include:
 ## Shape Descriptions
 We will use some examples to explain how to describe objects. Below is the definition of a pyramid. We begin by using the keyword **shape** followed by the variable name "pyramid". We then define each point. A point is a **p** followed by a number (i.e. p0, p1, p2, etc). On that same line, we define the x, y, and z coordinates of the point. In the example below, p0 is the point (-0.2, 0.0, 0.2). The value of the variable e is ultimately replaced by 0.2 when the program runs. 
 
-```
+```C
 use colors
 num e = 0.2
 
@@ -51,7 +51,7 @@ After we define the points (p0 through p4) we can then use them to define a face
 ### A word about color definitions
 Note too, that we **use** colors. Colors is another .sk file that contains the following:
 
-```
+```C
 color purple = 0xff 0x00 0xff 0xff
 color red = 0xff 0x00 0x00 0xff
 color green = 0x00 0xff 0x00 0xff
@@ -78,7 +78,7 @@ Generally, though. Camera position will skew all of this. By default, the camera
 ## Generator
 A generator is the primary mechanism to establish an entity within the 3d space. It is...regrettable in it's over-engineering and likely the first thing I tackle after I complete this manual. Let's keep it simple for now. A generator:
 
-```
+```C
 generator genpyramid {
     pyramid mypyramid(1.0)
     o: 0.0 0.0 0.0
@@ -90,7 +90,7 @@ The next line which begins with **o:** tells us where to place *mypyramid* - dea
 
 Now - with all this information - you should be able to run the following code and play around with a few things:
 
-```
+```C
 color red = 0xff 0x00 0x00 0xff
 color green = 0x00 0xff 0x00 0xff
 color blue = 0x00 0x00 0xff 0xff
@@ -126,7 +126,7 @@ generator genpyramid {
 ## Actions
 With the basics down, we can now start to look at actions and action sequences. An action allows us to do something with the object we've generated. Let's have a look at the changes to the code:
 
-```
+```C
 action rotate {
     init:
         o.ry += 1.0!
@@ -167,7 +167,7 @@ With the rotate action defined, let's see how we can attach it to the generated 
 #### Some Other Notes (probably ill-placed)
 In addition to the contextual **o**, we also have **c** for camera and **p** for player. How do we know who the "player" is? There can be only one player and you generate it like any other object:
 
-```
+```C
 generator genplayer {
     someshape player(1.0)
     o: 0.0 0.0 0.0
@@ -175,4 +175,33 @@ generator genplayer {
 ```
 Player is a special object within skitch and this allows you to call it out specifically in actions that are attached to other objects. More on this later.
 
-# TODO - continue manual...
+## Maths and other Symbols
+
+Mathematical statements can be included in action sequences. The following mathematical operators are available:
+
+* +, -, /, *, %
+* cos, sin
+* +=
+
+The following comparison operators are also available: >, <, >=, <=. As earlier mentioned, when transitioning from on sequence to another -> is used. 
+
+Examples are useful - here are a few valid statements in an action sequence:
+
+```C
+action sampleaction {
+    init:
+        angle = angle speed + 360.0 %!
+        c.tx = o.tx angle 180.0 / pi * cos r * +!
+        c.lz <= c.tz -> back
+        _ -> init
+}
+```
+Let's examine each statement in the **init** action sequence. As you can see by the first statement, math in skitch is done with reverse polish notation or RPN. In this form, you first introduce the arguments for an operator and then introduce the operator. So:
+
+1. angle = (angle+speed)%360. We first add speed to angle and then compute modulo 360. This will always give us an angle between 0 and 359. 
+2. c.tx = cos((angle/180.0)*pi)*r+o.tx. Looking at this, you can see that RPN is merely a stack based system. We put o.tx, angle, and 180.0 on the stack. The operator / then pops angle and 180.0 off the stack and computes the division and places the result back on the stack. We then add pi onto the stack and multiply (angle/180)*pi and add that to the stack and so on. 
+3. c.lz <= c.tz -> back. If c.lz is less than or equal to c.tz, then goto back. 
+4. _ -> init. If you get here, then goto init. 
+
+Finally - note the exclamation mark at the end of these mathematical statements. They note the end of the statement. 
+

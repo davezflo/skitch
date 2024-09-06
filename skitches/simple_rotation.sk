@@ -1,0 +1,16 @@
+use shapes
+
+action rotate {
+    num xspeed = 0.01
+    num yspeed = 0.01
+    init:
+        o.rx += xspeed!
+        o.ry += yspeed!
+        _ -> init
+}
+generator genplayer {
+    plane player(1.0)
+    a: rotate(2.0 1.0)
+    i: advancedlighting
+    o: 0.0 0.0 0.0
+}

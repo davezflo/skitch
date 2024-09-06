@@ -50,6 +50,7 @@ string SKFace::DebugString(SKModel *model)
     db.precision(4); 
     db << "\tcenter:   " << _center.x << " " << _center.y << " " << _center.z << endl;
     db << "\tnormal:   " << _normal.x << " " << _normal.y << " " << _normal.z << endl;
+    db << "\tcolor:    " << _fill->DebugString();
     db << "\tdistance: " << _distance << endl;
     
     string returnvalue = db.str();
