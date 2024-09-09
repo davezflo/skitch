@@ -165,6 +165,7 @@ void SKEntity::Attach(SKAction *action, vector<float> parameters, string waiton)
 
 void SKEntity::RegisterAndRun(SKAction *action, vector<float> parameters, string waiton)
 {
+    SKLog::Log(string("Running Action ") + action->GetName() + string(" when ") + waiton + string(" occurs."), SKLogType::Verbose);
      action->Register(this, parameters);
     _runningActions.insert(pair<string, SKAction *>(waiton, action));
     _actions.push_back(action);

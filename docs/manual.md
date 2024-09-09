@@ -124,7 +124,7 @@ generator genpyramid {
 3. Can you make the pyramid get closer to you? Farther away? How did you do that?
 
 ## Actions
-With the basics down, we can now start to look at actions and action sequences. An action allows us to do something with the object we've generated. Let's have a look at the changes to the code:
+With the basics down, we can now start to look at actions and action sequences (states). An action allows us to do something with the object we've generated. Let's have a look at the changes to the code:
 
 ```C
 action rotate {
@@ -149,6 +149,12 @@ Here, we are defining an action that we're calling rotate. All actions define at
 4. A ticket punch (used like a semaphore)
 
 There's a lot to actions, so let's start simply and then build from there. In the above code, the **action** *rotate* has one action sequence called init. When executed, the action operates within the context of the object. That context defines a variable called **o** which represents the object to which the action is attached (in this case, *mypyramid*). 
+
+# Rules within Action Sequences
+You'll notice that Actions are simply state machines. All actions must have an **init** state and, if you want to cause the state machine to stop processing, you can transition to a **deinit** state. Within each action sequence, init, for example, there are some simple (if not annoying) rules:
+
+1. All computations and any simple logic statements are done first, then transitions are evaluated (regardless of how you've ordered things). To avoid confusion, you should always place your state transitions at the end of the action sequence with the default transition (i.e. _ ->) at the end.
+2. All action sequences must have a default transition defined (i.e. _ ->). 
 
 The contextual object **o** defines several member values that can be used to manipulate it:
 
@@ -183,7 +189,7 @@ Mathematical statements can be included in action sequences. The following mathe
 * cos, sin
 * +=
 
-The following comparison operators are also available: >, <, >=, <=. As earlier mentioned, when transitioning from on sequence to another -> is used. 
+The following comparison operators are also available: ==, >, <, >=, <=. As earlier mentioned, when transitioning from on sequence to another -> is used. 
 
 Examples are useful - here are a few valid statements in an action sequence:
 

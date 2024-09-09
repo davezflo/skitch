@@ -1,152 +1,167 @@
 use shapes
 
-action movecamera {
-    num position = 0.0
-    num time = 20.0
-    num to = 3.0
-    num zsch = 0.0
-    num xsch = 0.0
-    num at = 0.0
+num here = 0.0
+num there = 0.0
 
+action configurecamera {
+    num r = 3.0
+    num angle = 180.0
+    num above = 2.0
+    num pi = 3.14159
     init:
-        position == 0.0 -> southwest
-        position == 1.0 -> northwest
-        position == 2.0 -> northeast
-        position == 3.0 -> southeast
-        _ -> southwest
+        c.tx = o.tx angle 180.0 / pi * cos r * +!
+        c.ty = o.ty above +!
+        c.tz = o.tz angle 180.0 / pi * sin r * +!
+        _ -> deinit
+}
 
-    southwest:
-        zsch = c.lz to -!
-        xsch = c.lx to -!
-        _ -> lerpit
+action updatecamera {
+    num r = 3.0
+    num angle = 180.0
+    num above = 2.0
+    num pi = 3.14159
+    init:
+        c.tx = o.tx angle 180.0 / pi * cos r * +!
+        c.ty = o.ty above +!
+        c.tz = o.tz angle 180.0 / pi * sin r * +!
+        c.lx = o.tx!
+        c.lz = o.tz!
+        _ -> deinit
+}
 
-    northwest:
-        zsch = c.lz to +!
-        xsch = c.lx to -!
-        _ -> lerpit
+action configurelights {
+    num time = 10.0
+    num counter = 0.0
+    init:
+        l.tx += 0.4!
+        l.ty += 0.1!
+        l.tz -= 0.2!
+        counter += 1.0!
+        counter == time -> deinit
+        _ -> init
+}
 
-    northeast:
-        zsch = c.lz to +!
-        xsch = c.lx to +!
-        _ -> lerpit
+action bank {
+    num time = 180.0
+    num angle = -45.0
+    num targetangle = 0.0
+    num finalangle = 0.0
+    num comptarget = 0.0
+    num compangle = 0.0
+    num at = 0.0
+    
+    init:
+        finalangle = targetangle!
+        targetangle = angle!
+        angle = finalangle!
+        at = 0.0!
+        _ -> initiate
 
-    southeast:
-        zsch = c.lz to -!
-        xsch = c.lx to +!
-        _ -> lerpit
+    initiate:
+        at += 1.0 time 0.1 * /!
+        angle = 1.0 at - angle * at targetangle * +!
+        o.pa = angle!
+        comptarget = targetangle abs 0.0001 -!
+        compangle = angle abs!
+        compangle >= comptarget -> reset
+        _ -> initiate
 
-    lerpit:
+    reset:
+        at = 0.0!
+        targetangle = finalangle!
+        _ -> recover
+    
+    recover:
         at += 1.0 time /!
-        c.tz = 1.0 at - c.tz * zsch at * +!
-        c.tx = 1.0 at - c.tx * xsch at * +!
-        at >= 1.0 -> finalize
-        _ -> lerpit
+        angle = 1.0 at - angle * at targetangle * +!
+        o.pa = angle!
+        angle == targetangle -> finalize!
+        _ -> recover
 
     finalize:
-        c.tz = zsch!
-        c.tx = xsch!
         _ -> deinit
-
 }
 
-action simplecamera {
-    num time = 30.0
-    num dist = 3.0
-    num height = 3.0
-    num xs = 0.0
-    num zs = 0.0
-    num needinit = 1.0
-    num ascratch = 0.0
-    num last = 0.0
+action shift {
+    num time = 0.0
+    num amount = 0.0
+    num at = 0.0
+    num target = 0.0
+    num comptarget = 0.0
+    num compvalue = 0.0
+
+    num r = 3.0
+    num angle = 180.0
+    num above = 2.0
+    num pi = 3.14159
     
     init:
-        c.ty = height!
-        ascratch = o.ry!
+        target = o.pa amount +!
+        _ -> lerploop
+
+        lerploop:
+            at += 1.0 time /!
+            o.pa = 1.0 at - o.pa * at target * +!
+            c.tx = o.tx angle 180.0 / pi * cos r * +!
+            c.ty = o.ty above +!
+            c.tz = o.tz angle 180.0 / pi * sin r * +!
+            c.lx = o.tx!
+            c.lz = o.tz!
+            o.pa == target -> finalize
+            _ -> lerploop
+
+    finalize:
+        here = o.pa!
+        _ -> deinit
+        
+}
+
+action shipcontrol {
+    num repeat = 0.0
+    init:
+        repeat = 0.0!
         k.Left == keydown -> left
-        k.Up == keydown -> top
         k.Right == keydown -> right
-        k.Down == keydown -> bottom
-        k.F == keydown -> elevate
-        k.D == keydown -> lower
-        needinit == 1.0 -> eval 
         _ -> init
 
-    elevate:
-        height += 0.2!
-        height >= 5.0 -> toplimit
-        _ -> init
-
-    lower:
-        height -= 0.2!
-        height <= 0.2 -> bottomlimit
+    left:
+        punch zlerp
+        ~|bank o.rx 90.0 -45.0 0.0|~'zlerp
+        ~|shift o.tz 100.0 0.8|~'zlerp
         _ -> init
     
-    toplimit:
-        height = 5.0!
-        _ -> init
-
-    bottomlimit:
-        height = 0.2!
-        _ -> init
- 
-    eval:
-        needinit = 0.0!
-        last == 0.0 -> left
-        last == 1.0 -> top
-        last == 2.0 -> right
-        last == 3.0 -> bottom
-        _ -> init
-
-    forward:
-        xs = o.tz dist +!
+    right: 
         punch zlerp
-        ~|lerp c.lz xs time|~'zlerp
-        ~|lerp o.tz xs time|~'zlerp
-        _ -> eval
-
-    backward:
-        xs = o.tz dist -!
-        punch zlerp
-        ~|lerp c.lz xs time|~'zlerp
-        ~|lerp o.tz xs time|~'zlerp
-        _ -> eval
-
-    leftway:
-        xs = o.tx dist -!
-        punch xlerp
-        ~|lerp c.lx xs time|~'xlerp
-        ~|lerp o.tx xs time|~'xlerp
-        _ -> eval
-
-    rightway:
-        xs = o.tx dist +!
-        punch xlerp
-        ~|lerp c.lx xs time|~'xlerp
-        ~|lerp o.tx xs time|~'xlerp
-        _ -> eval
-        
-    left:
-        ~|movecamera _ 0.0 time dist|~
+        ~|bank o.rx 90.0 45.0 0.0|~'zlerp
+        ~|shift o.tz 100.0 -0.8|~'zlerp
         _ -> init
 
-    top:
-        ~|movecamera _ 1.0 time dist|~
-        _ -> init
+}
 
-    right:
-        ~|movecamera _ 2.0 time dist|~
-        _ -> init
-
-    bottom:
-        ~|movecamera _ 3.0 time dist|~
+action targetspin {
+    init:
+        o.rx += 1.0!
+        o.ry += 2.0!
         _ -> init
 }
 
-
+generator target {
+    box target(1.0)
+    a: targetspin()
+    o: 12.0 -1.0 0.0
+}
 
 generator genplayer {
     plane player(1.0)
-    a: simplecamera(100.0)
+    a: configurecamera()
+    a: configurelights()
+    a: shipcontrol()
     i: simplelighting
     o: 0.0 0.0 0.0
+}
+
+watch {
+    camera
+    here
+    there
 }
