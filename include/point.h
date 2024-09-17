@@ -41,7 +41,7 @@ class SKPoint
             returnvalue->SetZ(_z);
             return returnvalue;
         }
-        void RemoveTemplate() {_template = false;}
+        
         bool IsTemplate() {return _template;}
         SKPoint *Duplicate(SKModel *model);
         string GetName() {return _name;}
@@ -91,6 +91,7 @@ class SKPoint
         void ApplyTranslationX(float value);
         void ApplyTranslationY(float value);
         void ApplyTranslationZ(float value);
+        void ApplyScale(float value);
 
         void Update(SKProjection* projection);
 };

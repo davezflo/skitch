@@ -2,6 +2,9 @@
 #include "exceptions.h"
 #include "generate.h"
 #include "model.h"
+#include "transformer.h"
+#include "fractaltransformer.h"
+#include "recolortransformer.h"
 
 SKToken *SKParseGenerate::Parse(SKToken *token, SKContext *context, map<string, SKElementParser *> _parsers)
 {
@@ -29,6 +32,8 @@ SKToken *SKParseGenerate::Parse(SKToken *token, SKContext *context, map<string, 
         ExtractOnMatch(EndTok, &check);
         gen.SetMap(mapname, tilesize, distance);
     }
+
+    check = ExtractTransformers(&gen, context, check);
     
     while(PeekNextToken(check) == AttachTok)
     {
@@ -44,11 +49,13 @@ SKToken *SKParseGenerate::Parse(SKToken *token, SKContext *context, map<string, 
         ExtractOnMatch(EndTok, &check);
         gen.AddAction(actionname, values);
     }
+
     while(PeekNextToken(check) == InteractTok)
     {
         ExtractOnMatch(InteractTok, &check);
         gen.AddInteraction(ExtractOnMatch(VarTok, &check));
     }
+
     RelativeTo rt = None;
     if(PeekNextToken(check)==OriginTok)
         rt = Origin;
@@ -72,4 +79,34 @@ SKToken *SKParseGenerate::Parse(SKToken *token, SKContext *context, map<string, 
     _model->AddGenerator(&gen);
 
     return check->next;
+}
+
+SKToken *SKParseGenerate::ExtractTransformers(SKGenerator *gen, SKContext *context, SKToken *check)
+{
+    map<string, SKTransformer*> validVias;
+    SKFractalTransformer ft; SKRecolorTransformer rt;
+    validVias[FractalTok] = &ft;
+    validVias[RecolorTok] = &rt;
+
+    while(PeekNextToken(check) == TransformTok)
+    {
+        ExtractOnMatch(TransformTok, &check);
+        string nextToken = PeekNextToken(check);
+        if(validVias.find(nextToken) == validVias.end()) throw ParseException("Invalid transformer:" + nextToken);
+        SKTransformer *t = validVias[nextToken]->Create();
+        check = check->next;
+        
+        ExtractOnMatch(StartTok, &check);
+        vector<SKRValue *> values;
+        while(PeekNextToken(check) != EndTok)
+        {
+            SKRValue *var = ExtractRValue(&check, context);
+            values.push_back(var);
+        }
+        ExtractOnMatch(EndTok, &check);
+        t->Initialize(values);
+        gen->AddTransformer(t);
+    }
+
+    return check;
 }

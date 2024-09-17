@@ -1,6 +1,7 @@
 #include "generate.h"
 #include "model.h"
 #include "projection.h"
+#include "transformer.h"
 #include "shape.h"
 #include "map.h"
 #include "entity.h"
@@ -26,6 +27,10 @@ SKGenerator::~SKGenerator()
     {
         delete (*it);
     }
+    for(auto it = _transformers.begin();it!=_transformers.end();++it)
+    {
+        delete (*it);
+    }
 }
 
 SKGenerator *SKGenerator::AllocCopy()
@@ -37,7 +42,8 @@ SKGenerator *SKGenerator::AllocCopy()
         returnvalue->AddAction(a.action, a.parameters);
     for(auto i: _interactions)
         returnvalue->AddInteraction(i);
-    
+    for(auto t: _transformers)
+        returnvalue->AddTransformer(t->AllocCopy());
     returnvalue->SetLocation(_location, _x, _y, _z);
     return returnvalue;
 }
@@ -48,6 +54,11 @@ void SKGenerator::Initialize(SKModel *model, string entity, string varname, floa
     _entity = entity;
     _varname = varname;
     _limit = limit;
+}
+
+void SKGenerator::AddTransformer(SKTransformer *transformer)
+{
+    _transformers.push_back(transformer);
 }
 
 void SKGenerator::AddAction(string action, vector<float> parameters)
@@ -103,6 +114,8 @@ void SKGenerator::ConstructCache()
         _nameIterator++;
         _namedIterator++;
         SKShape *shape = _model->AddShapeInstance(s, _entity);
+        for(auto t: _transformers)
+            t->Transform(_model, shape);
         for(auto a: _actions)
             _model->AttachActionToShape(s, a.action, a.parameters);
         for(auto a: _interactions)
@@ -160,6 +173,7 @@ void SKGenerator::Update(SKProjection *projection)
                         entity->SetAttribute(rx, a._xRotate);
                         entity->SetAttribute(ry, a._yRotate);
                         entity->SetAttribute(rz, a._zRotate);
+                      
                         entity->ResetNeedsRender(true);
                     }
                 }

@@ -171,6 +171,20 @@ SKShape *SKModel::AddShapeInstance(string name, string prototype)
     return returnvalue;
 }
 
+SKShape *SKModel::GetShapeTemplate(string name)
+{
+    SKShape *returnvalue = NULL;
+    for(auto it=_shapes.begin();it!=_shapes.end();++it)
+    {
+        if((*it)->GetName() == name)
+        {
+            returnvalue = (*it);
+            break;
+        }
+    }
+    return returnvalue;
+}
+
 vector<SKShape *> SKModel::GetShapes()
 {
     vector<SKShape *> returnvalue;
@@ -503,6 +517,8 @@ void SKModel::FireMouseEvent(float x, float y, MouseState state)
     }
 }
 
+//TODO: When attaching an action to two different entities, key firing will only occur for one of these. 
+//      Expected behavior is that each will fire something on the key event (even if same action, just multi-mapped)
 void SKModel::FireKeyEvent(string key, KeyState state)
 {
      string k = key + to_string((int)state);
@@ -539,7 +555,7 @@ SKShape *SKModel::CreateActiveAnonShape(vector<Vector4> points, list<vector<int>
         SKSingleRValue x(to_string(p.x), this, false), y(to_string(p.y), this, false), z(to_string(p.z), this, false);
         pp.SetX((SKRValue *)AddValue(&x)); pp.SetY((SKRValue *)AddValue(&y)); pp.SetZ((SKRValue *)AddValue(&z));
         SKPoint *fullpoint = AddPoint(&pp);
-        fullpoint->RemoveTemplate();
+        fullpoint->Live();
         newpoints.push_back(fullpoint);
     }
     SKColorVariable *fc = (SKColorVariable *)AddAnonVariable(&fillcolor);

@@ -60,6 +60,13 @@ void SKPoint::ApplyTranslationZ(float value)
     _translation.rows[3][2] = value;
 }
 
+void SKPoint::ApplyScale(float value)
+{
+    _xMatrix.ApplyScale(value);
+    _yMatrix.ApplyScale(value);
+    _zMatrix.ApplyScale(value);
+}
+
 void SKPoint::Update(SKProjection* projection)
 {
     Vector4 vec (

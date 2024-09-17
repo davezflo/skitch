@@ -42,6 +42,8 @@ class SKFace
         
         SKColorVariable *GetBorderColor();
         SKColorVariable *GetFillColor();
+        void SetBorderColor(SKColorVariable *cv);
+        void SetFillColor(SKColorVariable *cv);
 
         void SetPointValues(Vector4 a, Vector4 b, Vector4 c);
         
@@ -68,6 +70,7 @@ class SKFace
         void ApplyTranslationX(float value);
         void ApplyTranslationY(float value);
         void ApplyTranslationZ(float value);
+        void ApplyScale(float value);
         
     private:
         SKPoint *Locate(SKPoint *in, vector<SKPoint *>points);

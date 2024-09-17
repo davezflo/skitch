@@ -81,3 +81,8 @@
 #define UseTok "UseTok"
 #define CommentStartTok "CommentStartTok"
 #define CommentEndTok "CommentEndTok"
+#define TransformTok "TransformTok"
+#define ViaTok "ViaTok"
+#define FractalTok "FractalTok"
+#define RecolorTok "RecolorTok"
+

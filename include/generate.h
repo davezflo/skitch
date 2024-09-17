@@ -68,6 +68,7 @@ class SKProjection;
 class SKMap;
 class SKEntity;
 class SKSimpleCacheEntry;
+class SKTransformer;
 class SKGenerator
 {
     class ActionSet
@@ -85,6 +86,7 @@ class SKGenerator
         list<string> _interactions;
         vector<SKEntity *> _entities;
         vector<SKSimpleCacheEntry *> _cache;
+        vector<SKTransformer *> _transformers;
         RelativeTo _location;
         float _x, _y, _z;
         float _limit;
@@ -104,6 +106,7 @@ class SKGenerator
         void SetMap(string map, float tilesize, float distance);
         void AddAction(string action, vector<float> parameters);
         void AddInteraction(string interaction);
+        void AddTransformer(SKTransformer *transformer);
         void SetLocation(RelativeTo relative, float x, float y, float z);
         void Update(SKProjection *projection);
 

@@ -1,0 +1,75 @@
+use colors
+
+shape square {
+    p0 -0.1 -0.1 -0.1
+    p1 0.1 -0.1 -0.1
+    p2 0.1 0.1 -0.1
+    p3 -0.1 0.1 -0.1
+
+    @p0 p1 p2 blue blue
+    @p2 p3 p0 red red
+}
+
+shape pieces {
+    p0 -0.1 -0.1 -0.1
+    p1 0.1 -0.1 -0.1
+    p2 0.1 0.1 -0.1
+    p3 -0.1 0.1 -0.1
+    p4 0.0334 -0.0334 -0.1
+    p5 -0.0334 0.0334 -0.1
+
+    @p1 p4 p0 blue blue
+    @p3 p5 p2 red red
+}
+
+action zoom {
+    init:
+        k.Z == keydown -> zoom
+        k.Left == keydown -> rotateleft
+        k.Right == keydown -> rotateright
+        k.Up == keydown -> rotateup
+        k.Down == keydown -> rotatedown
+        _ -> init
+
+    zoom:
+        c.tz += 0.5!
+        _ -> init
+
+    rotateleft:
+        o.rz += 1.0!
+        _ -> init
+
+    rotateright:
+        o.rz -= 1.0!
+        _ -> init
+
+    rotateup:
+        o.rx += 1.0!
+        _ -> init
+
+    rotatedown:
+        o.rx -= 1.0!
+        _ -> init
+
+}
+
+action freerotate {
+    init:
+        o.rx += 1.0!
+        _ -> init
+}
+
+generator terraintile {
+    square test(1.0)
+    t: fractal(2.0 -0.1 0.15)
+    t: recolor(brown yellow)
+z    a: freerotate()
+    a: zoom()
+    i: simplelighting
+    o: 0.0 0.0 0.0
+}
+
+watch {
+    test
+    
+}

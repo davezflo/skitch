@@ -69,6 +69,7 @@ class SKModel
     public:
         vector<SKShape *> GetShapes();
         SKShape *GetShape(string name);
+        SKShape *GetShapeTemplate(string name);
         SKMap *GetMap(string name);
         SKProjection *GetProjection() {return _projection;}
         SKCamera *GetCamera() {return _camera;}

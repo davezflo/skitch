@@ -114,6 +114,9 @@ void SKParser::InitializeLexer()
     _lexer.AddToLexer(KeyUpTok, "keyup");
     _lexer.AddToLexer(GenerateTok, "generator");
     _lexer.AddToLexer(StateVariableTok, "state");
+    
+    _lexer.AddToLexer(FractalTok, "fractal");
+    _lexer.AddToLexer(RecolorTok, "recolor");
 
     _lexer.AddToLexer(AttachTok, "a:");
     _lexer.AddToLexer(OriginTok, "o:");
@@ -121,6 +124,7 @@ void SKParser::InitializeLexer()
     _lexer.AddToLexer(PlayerTok, "p:");
     _lexer.AddToLexer(InteractTok, "i:");
     _lexer.AddToLexer(MapAttachTok, "m:");
+    _lexer.AddToLexer(TransformTok, "t:");
     _lexer.AddToLexer(XTok, "x:");
     _lexer.AddToLexer(YTok, "y:");
     _lexer.AddToLexer(ZTok, "z:");

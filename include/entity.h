@@ -17,6 +17,7 @@ using namespace std;
 #define ly "ly"
 #define lz "lz"
 #define pa "pa"
+#define sc "sc"
 
 class SKProjection;
 class SKAction;

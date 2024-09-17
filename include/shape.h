@@ -25,11 +25,13 @@ class SKShape : public SKEntity
         void SetTx(float distance);
         void SetTy(float distance);
         void SetTz(float distance);
+        void SetScale(float distance);
 
     public:
         SKShape(vector<SKPoint *>points, vector<SKFace *> faces, string name, SKModel *model);
         virtual ~SKShape() {}
 
+        void ManagePoint(SKPoint *point);
         void AddPoint(SKPoint *point);
         void SelectPoint(SKPoint *point);
         void SelectPointFromXY(float x, float y);
@@ -49,6 +51,7 @@ class SKShape : public SKEntity
         SKShape *Duplicate(SKModel *model, string name);
         SKShape* AllocCopy();
         void AddInteraction(string interaction);
+        void ReplaceFaces(vector<SKFace *>newFaces);
         void AdjustShape(Vector4 newCenter);
         bool Interacts(const string &s)
         {

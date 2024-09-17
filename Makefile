@@ -10,7 +10,8 @@ files = main.cc action.cc actionsequence.cc actionthread.cc assignment.cc attrib
           eventlistener.cc face.cc generate.cc lex.cc log.cc lvalue.cc infinimap.cc turtlemap.cc maths.cc model.cc parser.cc point.cc projection.cc regex.cc \
 		  render.cc rvalue.cc shape.cc state.cc transition.cc variable.cc ticket.cc watch.cc light.cc map.cc surface.cc \
 		  elementparser.cc parsecolor.cc parsemap.cc parsewatch.cc parseaction.cc parsegenerate.cc parsenumber.cc parseshape.cc parsestring.cc \
-		  parseuse.cc interactlight.cc consume.cc comptransition.cc statetransition.cc parsestatevar.cc
+		  parseuse.cc interactlight.cc consume.cc comptransition.cc statetransition.cc parsestatevar.cc fractaltransformer.cc transformer.cc \
+		  recolortransformer.cc
 target = $(BINDIR)/skitch
 
 sources = ${files:%.cc=$(SOURCEDIR)/%.cc}

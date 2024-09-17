@@ -38,26 +38,12 @@ map test {
     trx: 90.0 tay: 0.5 taz: 0.5 tf: 3.0
 }
 
-map world {
-    infini
-    y: -0.3
-}
-
 generator genduo {
     floor bob(50.0)
     m: test(4.0 200.0)
     i: simplelighting
     m: -3.0 0.0 -2.0
 }
-
-zzz
-generator geninfini {
-    ground _(200.0)
-    m: world(10.0 80.0)
-    i: simplelighting
-    m: 0.0 0.0 0.0
-}
-zzz
 
 watch {
     player @1.0

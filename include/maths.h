@@ -24,6 +24,7 @@ private:
 
 public:
     float rows[SIZE][SIZE];
+    float scale = 1.0;
    
     float xTheta = numeric_limits<float>::quiet_NaN();
     float yTheta = numeric_limits<float>::quiet_NaN();
@@ -34,15 +35,20 @@ public:
     Matrix4x4& operator=(const Matrix4x4& o);
 
     void Inverse();
+
+    void ApplyScale(float value)
+    {
+        scale = value;
+    }
     
     void ApplyRotationX(float theta)
     {
         if(xTheta != theta)
         {
             xTheta = theta;
-            float c = cos(theta);
-            float s = sin(theta);
-            rows[0][0] = 1; rows[0][1] = 0; rows[0][2] = 0; rows[0][3] = 0;
+            float c = cos(theta)*scale;
+            float s = sin(theta)*scale;
+            rows[0][0] = scale; rows[0][1] = 0; rows[0][2] = 0; rows[0][3] = 0;
             rows[1][0] = 0; rows[1][1] = c; rows[1][2] = s; rows[1][3] = 0;
             rows[2][0] = 0; rows[2][1] = -s; rows[2][2] = c; rows[2][3] = 0;
         }
@@ -53,10 +59,10 @@ public:
         if(yTheta != theta)
         {
             yTheta = theta;
-            float c = cos(theta);
-            float s = sin(theta);
+            float c = cos(theta)*scale;
+            float s = sin(theta)*scale;
             rows[0][0] = c; rows[0][1] = 0; rows[0][2] = -s; rows[0][3] = 0;
-            rows[1][0] = 0; rows[1][1] = 1; rows[1][2] = 0; rows[1][3] = 0;
+            rows[1][0] = 0; rows[1][1] = scale; rows[1][2] = 0; rows[1][3] = 0;
             rows[2][0] = s; rows[2][1] = 0; rows[2][2] = c; rows[2][3] = 0;
         }
     }
@@ -66,11 +72,11 @@ public:
         if(zTheta != theta)
         {
             zTheta = theta;
-            float c = cos(theta);
-            float s = sin(theta);
+            float c = cos(theta)*scale;
+            float s = sin(theta)*scale;
             rows[0][0] = c; rows[0][1] = s; rows[0][2] = 0; rows[0][3] = 0;
             rows[1][0] = -s; rows[1][1] = c; rows[1][2] = 0; rows[1][3] = 0;
-            rows[2][0] = 0; rows[2][1] = 0; rows[2][2] = 1; rows[2][3] = 0;
+            rows[2][0] = 0; rows[2][1] = 0; rows[2][2] = scale; rows[2][3] = 0;
         }
     }
 

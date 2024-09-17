@@ -44,6 +44,18 @@ SKColorVariable *SKFace::GetFillColor()
         return NULL;
 }
 
+void SKFace::SetBorderColor(SKColorVariable *cv)
+{
+    _border = cv;
+    _adjustedBorder.Update(1, *cv);
+}
+
+void SKFace::SetFillColor(SKColorVariable *cv)
+{
+    _fill = cv;
+    _adjustedFill.Update(1, *cv);
+}
+
 string SKFace::DebugString(SKModel *model)
 {
     ostringstream db;
@@ -52,6 +64,7 @@ string SKFace::DebugString(SKModel *model)
     db << "\tnormal:   " << _normal.x << " " << _normal.y << " " << _normal.z << endl;
     db << "\tcolor:    " << _fill->DebugString();
     db << "\tdistance: " << _distance << endl;
+    db << "\tA:" << _pointA->DebugString() << " B:" << _pointB->DebugString() << " C:" << _pointC->DebugString() << endl;
     
     string returnvalue = db.str();
     return returnvalue; 
@@ -196,4 +209,11 @@ void SKFace::ApplyTranslationY(float value)
 void SKFace::ApplyTranslationZ(float value)
 {
     _translation.rows[3][2] = value;
+}
+
+void SKFace::ApplyScale(float value)
+{
+    _xMatrix.ApplyScale(value);
+    _yMatrix.ApplyScale(value);
+    _zMatrix.ApplyScale(value);
 }

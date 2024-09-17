@@ -44,6 +44,11 @@ SKShape::SKShape(vector<SKPoint *>points, vector<SKFace *> faces, string name, S
         _faces.push_back(f);
 }
 
+void SKShape::ManagePoint(SKPoint *point)
+{
+    _points.push_back(point);
+}
+
 void SKShape::AddPoint(SKPoint *point)
 {
     _operations.push(ShapeOperation{ShapeOperationType::CreatePoint, point});
@@ -190,6 +195,14 @@ void SKShape::AdjustShape(Vector4 newCenter)
     SetAttribute(tz, adjust.z);
 }
 
+void SKShape::ReplaceFaces(vector<SKFace *>newFaces)
+{
+    _faces.clear();
+
+    for(auto a: newFaces)
+        _faces.push_back(a);
+}
+
 void SKShape::Update(SKProjection *projection)
 {
     ProcessLight();
@@ -233,6 +246,8 @@ void SKShape::SetAttribute(string member, float value)
         this->SetTy(value);
     else if(member == tz)
         this->SetTz(value);
+    else if(member == sc)
+        this->SetScale(value);
     else if(member == pa)
         SetAttribute(_model->GetCurrentContext()->GetScratchString(pa), value);
     
@@ -285,6 +300,14 @@ void SKShape::SetTz(float distance)
         a->ApplyTranslationZ(distance);
     for(auto a: _faces)
         a->ApplyTranslationZ(distance);
+}
+
+void SKShape::SetScale(float amount)
+{
+    for(auto a: _points)
+        a->ApplyScale(amount);
+    for(auto a: _faces)
+        a->ApplyScale(amount);
 }
 
 void SKShape::DuplicateShape(SKModel *model)

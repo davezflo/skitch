@@ -26,7 +26,7 @@ SKEntity::SKEntity(SKModel *model)
     v = new SKAttributeVariable(tx, this); _attributes.insert(pair<string, SKAttributeVariable *>(tx, v));
     v = new SKAttributeVariable(ty, this); _attributes.insert(pair<string, SKAttributeVariable *>(ty, v));
     v = new SKAttributeVariable(tz, this); _attributes.insert(pair<string, SKAttributeVariable *>(tz, v));
-
+    v = new SKAttributeVariable(sc, this); _attributes.insert(pair<string, SKAttributeVariable *>(sc, v));
     _needsRender = true;
 }
        
